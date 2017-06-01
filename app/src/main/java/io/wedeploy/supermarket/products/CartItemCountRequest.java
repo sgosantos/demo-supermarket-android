@@ -10,6 +10,7 @@ import android.util.Log;
 import com.wedeploy.android.Callback;
 import com.wedeploy.android.transport.Response;
 import io.wedeploy.supermarket.cart.CartItemListener;
+import io.wedeploy.supermarket.login.LoginRequest;
 import io.wedeploy.supermarket.repository.SupermarketData;
 
 /**
@@ -47,14 +48,25 @@ public class CartItemCountRequest extends Fragment {
 
 				@Override
 				public void onSuccess(Response response) {
+					removeRequest();
+
 					listener.onGetCartItemCountSuccess(Integer.valueOf(response.getBody()));
 				}
 
 				@Override
 				public void onFailure(Exception e) {
+					removeRequest();
+
 					Log.e(TAG, "Couldn't get cart items count", e);
 				}
 			});
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(CartItemCountRequest.this)
+			.commit();
 	}
 
 	private CartItemListener listener;

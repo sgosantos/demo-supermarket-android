@@ -11,6 +11,7 @@ import com.wedeploy.android.transport.Response;
 import io.wedeploy.supermarket.R;
 import io.wedeploy.supermarket.products.model.Product;
 import io.wedeploy.supermarket.repository.SupermarketData;
+import io.wedeploy.supermarket.signup.SignUpRequest;
 import org.json.JSONException;
 
 /**
@@ -39,10 +40,13 @@ public class AddToCartRequest extends Fragment {
 				.execute(new Callback() {
 					@Override
 					public void onSuccess(Response response) {
+						removeRequest();
 					}
 
 					@Override
 					public void onFailure(Exception e) {
+						removeRequest();
+
 						Toast.makeText(
 							getContext(),
 							R.string.could_not_add_item_to_cart,
@@ -56,6 +60,13 @@ public class AddToCartRequest extends Fragment {
 				R.string.could_not_add_item_to_cart,
 				Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(AddToCartRequest.this)
+			.commit();
 	}
 
 	private Product product;

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.wedeploy.android.Callback;
 import com.wedeploy.android.transport.Response;
 import io.wedeploy.supermarket.R;
+import io.wedeploy.supermarket.products.CartItemCountRequest;
 import io.wedeploy.supermarket.repository.SupermarketData;
 
 /**
@@ -37,18 +38,27 @@ public class DeleteCartItemRequest extends Fragment {
 			.execute(new Callback() {
 				@Override
 				public void onSuccess(Response response) {
-
+					removeRequest();
 				}
 
 				@Override
 				public void onFailure(Exception e) {
 					if (!isAdded()) return;
 
+					removeRequest();
+
 					Toast.makeText(
 						getActivity(), R.string.could_not_delete_product_from_cart,
 						Toast.LENGTH_SHORT).show();
 				}
 			});
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(DeleteCartItemRequest.this)
+			.commit();
 	}
 
 	private String id;

@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import com.wedeploy.android.Callback;
 import com.wedeploy.android.transport.Response;
+import io.wedeploy.supermarket.login.LoginRequest;
 import io.wedeploy.supermarket.repository.SupermarketAuth;
 
 /**
@@ -46,14 +47,25 @@ public class ResetPasswordRequest extends Fragment {
 			.execute(new Callback() {
 				@Override
 				public void onSuccess(Response response) {
+					removeRequest();
+
 					listener.onResetPasswordSuccess();
 				}
 
 				@Override
 				public void onFailure(Exception e) {
+					removeRequest();
+
 					listener.onResetPasswordFailed(e);
 				}
 			});
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(ResetPasswordRequest.this)
+			.commit();
 	}
 
 	private String email;
