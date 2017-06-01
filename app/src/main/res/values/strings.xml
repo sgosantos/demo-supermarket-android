@@ -10,7 +10,9 @@
     <string name="checkout">Checkout</string>
     <string name="could_not_add_item_to_cart">Could not add item to cart</string>
     <string name="could_not_delete_product_from_cart">Could not delete product from cart</string>
+    <string name="could_not_login">Could not login</string>
     <string name="could_not_sign_in_please_try_again">Could not log in. Please, try again</string>
+    <string name="could_not_sign_up">Could not sign up</string>
     <string name="delete">Delete</string>
     <string name="dont_you_have_an_account">Don\'t you have an account?</string>
     <string name="email">email</string>

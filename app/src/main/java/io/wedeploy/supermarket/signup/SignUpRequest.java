@@ -72,14 +72,25 @@ public class SignUpRequest extends Fragment {
 			.subscribe(new DisposableSingleObserver<Response>() {
 				@Override
 				public void onSuccess(Response response) {
+					removeRequest();
+
 					listener.onSignUpSuccess();
 				}
 
 				@Override
-				public void onError(Throwable e) {
-					listener.onSignUpFailed(new Exception(e));
+				public void onError(Throwable throwable) {
+					removeRequest();
+
+					listener.onSignUpFailed(throwable);
 				}
 			});
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(SignUpRequest.this)
+			.commit();
 	}
 
 	private String email;

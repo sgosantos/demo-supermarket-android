@@ -16,6 +16,8 @@ import io.wedeploy.supermarket.login.LoginActivity;
 import io.wedeploy.supermarket.products.ProductsActivity;
 import io.wedeploy.supermarket.view.AlertMessage;
 
+import static io.wedeploy.supermarket.util.ErrorUtil.getError;
+
 public class SignUpActivity extends AppCompatActivity implements SignUpListener {
 
 	@Override
@@ -27,12 +29,14 @@ public class SignUpActivity extends AppCompatActivity implements SignUpListener 
 	}
 
 	@Override
-	public void onSignUpFailed(Exception e) {
+	public void onSignUpFailed(Throwable throwable) {
 		if (isFinishing()) return;
 
 		enableFields(true);
 		binding.steps.getNextButton().setText(R.string.sign_up);
-		AlertMessage.showErrorMessage(this, "Could not sign up");
+
+		AlertMessage.showErrorMessage(
+			this, getError(throwable, getString(R.string.could_not_sign_up)));
 	}
 
 	@Override

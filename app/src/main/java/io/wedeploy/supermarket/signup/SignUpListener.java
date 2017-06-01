@@ -8,6 +8,6 @@ interface SignUpListener {
 
 	void onSignUpSuccess();
 
-	void onSignUpFailed(Exception e);
+	void onSignUpFailed(Throwable throwable);
 
 }

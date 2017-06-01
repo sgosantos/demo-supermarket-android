@@ -17,6 +17,8 @@ import io.wedeploy.supermarket.resetpassword.ResetPasswordActivity;
 import io.wedeploy.supermarket.signup.SignUpActivity;
 import io.wedeploy.supermarket.view.AlertMessage;
 
+import static io.wedeploy.supermarket.util.ErrorUtil.getError;
+
 /**
  * @author Silvio Santos
  */
@@ -31,13 +33,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 	}
 
 	@Override
-	public void onLoginFailed(Exception e) {
+	public void onLoginFailed(Throwable throwable) {
 		if (isFinishing()) return;
 
 		enableFields(true);
 		binding.signInButton.setText(R.string.log_in);
 
-		AlertMessage.showErrorMessage(this, getString(R.string.invalid_email_or_password));
+		AlertMessage.showErrorMessage(
+			this, getError(throwable, getString(R.string.could_not_login)));
 	}
 
 	@Override

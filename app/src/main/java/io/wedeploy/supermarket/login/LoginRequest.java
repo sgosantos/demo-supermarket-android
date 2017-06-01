@@ -74,14 +74,25 @@ public class LoginRequest extends Fragment {
 			.subscribe(new DisposableSingleObserver<Response>() {
 				@Override
 				public void onSuccess(Response response) {
+					removeRequest();
+
 					listener.onLoginSuccess();
 				}
 
 				@Override
-				public void onError(Throwable e) {
-					listener.onLoginFailed(new Exception(e));
+				public void onError(Throwable throwable) {
+					removeRequest();
+
+					listener.onLoginFailed(throwable);
 				}
 			});
+	}
+
+	private void removeRequest() {
+		getActivity().getSupportFragmentManager()
+			.beginTransaction()
+			.remove(LoginRequest.this)
+			.commit();
 	}
 
 	private String email;

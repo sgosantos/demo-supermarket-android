@@ -7,6 +7,6 @@ interface LoginListener {
 
 	void onLoginSuccess();
 
-	void onLoginFailed(Exception e);
+	void onLoginFailed(Throwable throwable);
 
 }
