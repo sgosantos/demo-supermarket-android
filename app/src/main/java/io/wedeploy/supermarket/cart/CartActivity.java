@@ -38,7 +38,7 @@ public class CartActivity extends AppCompatActivity
 
 	@Override
 	public void onDeleteFromCart(CartProduct cartProduct) {
-		DeleteCartItemRequest.delete(this, cartProduct.getId());
+		cartViewModel.deleteFromCart(cartProduct.getId());
 
 		if (adapter.getItemCount() == 0) {
 			showEmptyCart();
@@ -86,8 +86,9 @@ public class CartActivity extends AppCompatActivity
 		});
 
 		showLoading();
-		ViewModelProviders.of(this).get(CartViewModel.class)
-			.getCart()
+		cartViewModel = ViewModelProviders.of(this).get(CartViewModel.class);
+
+		cartViewModel.getCart()
 			.observe(this, new Observer<List<CartProduct>>() {
 				@Override
 				public void onChanged(@Nullable List<CartProduct> cartProducts) {
@@ -187,6 +188,7 @@ public class CartActivity extends AppCompatActivity
 
 	private final CartAdapter adapter = new CartAdapter(this);
 	private ActivityCartBinding binding;
+	private CartViewModel cartViewModel;
 
 	private static final String TAG = CartActivity.class.getSimpleName();
 
