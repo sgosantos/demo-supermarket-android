@@ -1,5 +1,9 @@
 package io.wedeploy.supermarket.cart;
 
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,36 +32,9 @@ import java.util.List;
  * @author Silvio Santos
  */
 public class CartActivity extends AppCompatActivity
-	implements LoaderManager.LoaderCallbacks<List<CartProduct>>, DeleteFromCartListener {
+	implements DeleteFromCartListener, LifecycleRegistryOwner {
 
-	@Override
-	public Loader<List<CartProduct>> onCreateLoader(int id, Bundle args) {
-		return new CartLoader(this);
-	}
-
-	@Override
-	public void onLoadFinished(Loader<List<CartProduct>> loader, List<CartProduct> products) {
-		if (products == null) {
-			showEmptyCart();
-			Toast.makeText(this, "Could not load products", Toast.LENGTH_LONG).show();
-
-			return;
-		}
-
-		if (products.isEmpty()) {
-			showEmptyCart();
-
-			return;
-		}
-
-		showCartProducts();
-		adapter.setItems(products);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<List<CartProduct>> loader) {
-		adapter.setItems(null);
-	}
+	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
 	@Override
 	public void onDeleteFromCart(CartProduct cartProduct) {
@@ -79,6 +56,11 @@ public class CartActivity extends AppCompatActivity
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public LifecycleRegistry getLifecycle() {
+		return lifecycleRegistry;
 	}
 
 	@Override
@@ -104,7 +86,14 @@ public class CartActivity extends AppCompatActivity
 		});
 
 		showLoading();
-		getSupportLoaderManager().initLoader(0, null, this);
+		ViewModelProviders.of(this).get(CartViewModel.class)
+			.getCart()
+			.observe(this, new Observer<List<CartProduct>>() {
+				@Override
+				public void onChanged(@Nullable List<CartProduct> cartProducts) {
+					showCartProducts(cartProducts);
+				}
+			});
 	}
 
 	private void sendCheckoutEmail() {
@@ -126,7 +115,22 @@ public class CartActivity extends AppCompatActivity
 			});
 	}
 
-	private void showCartProducts() {
+	private void showCartProducts(List<CartProduct> products) {
+		if (products == null) {
+			showEmptyCart();
+			Toast.makeText(this, "Could not load products", Toast.LENGTH_LONG).show();
+
+			return;
+		}
+
+		if (products.isEmpty()) {
+			showEmptyCart();
+
+			return;
+		}
+
+		adapter.setItems(products);
+
 		TransitionManager.beginDelayedTransition(binding.rootLayout, new Fade());
 		binding.emptyView.setVisibility(View.INVISIBLE);
 		binding.loading.setVisibility(View.INVISIBLE);

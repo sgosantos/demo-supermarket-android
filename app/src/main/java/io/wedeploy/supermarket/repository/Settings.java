@@ -73,7 +73,7 @@ public class Settings {
 	private static final String USER_EMAIL = "userEmail";
 	private static final String USER_ID = "userId";
 	private static final String USER_NAME = "userName";
-	private static final String USER_PHOTO = "userId";
+	private static final String USER_PHOTO = "userPhoto";
 	private static final String USER_TOKEN = "userToken";
 
 }
