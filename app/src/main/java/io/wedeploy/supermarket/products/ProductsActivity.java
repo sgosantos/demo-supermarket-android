@@ -10,15 +10,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.transition.Fade;
 import android.support.transition.TransitionManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 import io.wedeploy.supermarket.R;
 import io.wedeploy.supermarket.cart.CartActivity;
-import io.wedeploy.supermarket.cart.CartItemListener;
 import io.wedeploy.supermarket.databinding.ActivityMainBinding;
 import io.wedeploy.supermarket.logout.LogoutBottomSheet;
 import io.wedeploy.supermarket.products.adapter.ProductAdapter;
@@ -44,16 +41,7 @@ public class ProductsActivity extends AppCompatActivity
 
 	@Override
 	public void onItemAddedToCart(Product product) {
-		String countText = binding.cartItemCount.getText().toString();
-		int count = 0;
-
-		if (!TextUtils.isEmpty(countText) && TextUtils.isDigitsOnly(countText)) {
-			count = Integer.valueOf(countText);
-		}
-
-		updateCartItemCount(count + 1);
-
-		AddToCartRequest.addToCart(this, product);
+		productViewModel.addToCart(product);
 	}
 
 	@Override

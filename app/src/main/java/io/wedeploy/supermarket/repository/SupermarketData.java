@@ -28,13 +28,19 @@ public class SupermarketData {
 		instance = null;
 	}
 
-	public Call<Response> addToCart(Product product) throws JSONException {
-		JSONObject cartProductJsonObject = new JSONObject()
-			.put("productTitle", product.getTitle())
-			.put("productPrice", product.getPrice())
-			.put("productFilename", product.getFilename())
-			.put("productId", product.getId())
-			.put("userId", currentUserId);
+	public Call<Response> addToCart(Product product) {
+		JSONObject cartProductJsonObject = new JSONObject();
+
+		try {
+			cartProductJsonObject.put("productTitle", product.getTitle())
+				.put("productPrice", product.getPrice())
+				.put("productFilename", product.getFilename())
+				.put("productId", product.getId())
+				.put("userId", currentUserId);
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 		return weDeploy.data(DATA_URL)
 			.create("cart", cartProductJsonObject);
