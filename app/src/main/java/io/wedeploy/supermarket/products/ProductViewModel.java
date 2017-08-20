@@ -4,8 +4,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import com.wedeploy.android.transport.Response;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.wedeploy.supermarket.products.model.Product;
@@ -20,6 +22,12 @@ import java.util.List;
  * @author Silvio Santos
  */
 public class ProductViewModel extends ViewModel {
+
+	public LiveData<Integer> getCartItemCount() {
+		loadCartItemCount();
+
+		return cartItemCount;
+	}
 
 	public LiveData<List<Product>> getProducts() {
 		if (products == null) {
@@ -38,13 +46,42 @@ public class ProductViewModel extends ViewModel {
 		this.type = type;
 	}
 
+	@Override
+	protected void onCleared() {
+		disposables.clear();
+	}
+
 	private boolean changedFilter(String type) {
 		return !this.type.equalsIgnoreCase(type);
 	}
 
+	private void loadCartItemCount() {
+		SupermarketData data = SupermarketData.getInstance();
+
+		disposables.add(data.getCartCount()
+			.asSingle()
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(new Consumer<Response>() {
+				@Override
+				public void accept(
+					@io.reactivex.annotations.NonNull Response response) throws Exception {
+
+					cartItemCount.setValue(Integer.valueOf(response.getBody()));
+				}
+			}, new Consumer<Throwable>() {
+				@Override
+				public void accept(@io.reactivex.annotations.NonNull Throwable throwable)
+					throws Exception {
+
+					cartItemCount.setValue(null);
+				}
+			}));
+	}
+
 	private void loadProducts(String type) {
 		SupermarketData data = SupermarketData.getInstance();
-		data.getProducts(type)
+		disposables.add(data.getProducts(type)
 			.asSingle()
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
@@ -60,7 +97,7 @@ public class ProductViewModel extends ViewModel {
 					public void accept(@NonNull Throwable throwable) throws Exception {
 						products.setValue(null);
 					}
-				});
+				}));
 	}
 
 	@NonNull
@@ -75,6 +112,8 @@ public class ProductViewModel extends ViewModel {
 		return products;
 	}
 
+	private MutableLiveData<Integer> cartItemCount = new MutableLiveData<>();
+	private CompositeDisposable disposables = new CompositeDisposable();
 	private MutableLiveData<List<Product>> products;
 	private String type = "all";
 

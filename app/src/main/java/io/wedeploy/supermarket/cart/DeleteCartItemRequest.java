@@ -9,7 +9,6 @@ import android.widget.Toast;
 import com.wedeploy.android.Callback;
 import com.wedeploy.android.transport.Response;
 import io.wedeploy.supermarket.R;
-import io.wedeploy.supermarket.products.CartItemCountRequest;
 import io.wedeploy.supermarket.repository.SupermarketData;
 
 /**

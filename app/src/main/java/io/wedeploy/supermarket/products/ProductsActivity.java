@@ -32,7 +32,7 @@ import java.util.List;
  * @author Silvio Santos
  */
 public class ProductsActivity extends AppCompatActivity
-	implements OnFilterSelectedListener, CartItemListener, AddToCartListener,
+	implements OnFilterSelectedListener, AddToCartListener,
 	LifecycleRegistryOwner {
 
 	@Override
@@ -40,11 +40,6 @@ public class ProductsActivity extends AppCompatActivity
 		binding.filterBarView.setFilter(type);
 
 		productViewModel.filterProducts(type);
-	}
-
-	@Override
-	public void onGetCartItemCountSuccess(int count) {
-		updateCartItemCount(count);
 	}
 
 	@Override
@@ -111,7 +106,13 @@ public class ProductsActivity extends AppCompatActivity
 	protected void onResume() {
 		super.onResume();
 
-		CartItemCountRequest.getCartItemCount(this);
+		productViewModel.getCartItemCount()
+			.observe(this, new Observer<Integer>() {
+				@Override
+				public void onChanged(@Nullable Integer count) {
+					updateCartItemCount(count);
+				}
+			});
 	}
 
 	@Override
