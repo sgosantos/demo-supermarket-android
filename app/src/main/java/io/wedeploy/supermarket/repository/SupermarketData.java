@@ -2,7 +2,6 @@ package io.wedeploy.supermarket.repository;
 
 import com.wedeploy.android.Call;
 import com.wedeploy.android.WeDeploy;
-import com.wedeploy.android.exception.WeDeployException;
 import com.wedeploy.android.query.filter.Filter;
 import com.wedeploy.android.transport.Response;
 import io.wedeploy.supermarket.products.model.Product;

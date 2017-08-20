@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.transition.Fade;
 import android.support.transition.TransitionManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 import io.wedeploy.supermarket.R;
@@ -31,6 +30,8 @@ import java.util.List;
 public class ProductsActivity extends AppCompatActivity
 	implements OnFilterSelectedListener, AddToCartListener,
 	LifecycleRegistryOwner {
+
+	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
 	@Override
 	public void onFilterSelected(String type) {
@@ -137,8 +138,6 @@ public class ProductsActivity extends AppCompatActivity
 
 	private final ProductAdapter adapter = new ProductAdapter(this);
 	private ActivityMainBinding binding;
-
-	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 	private ProductViewModel productViewModel;
 	private static final String STATE_FILTER = "filter";
 

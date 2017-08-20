@@ -20,7 +20,8 @@ public class ErrorUtil {
 		}
 		else if (throwable instanceof WeDeployException) {
 			try {
-				Matcher matcher = Pattern.compile("\\{([\\s\\S]*)\\}").matcher(throwable.getMessage());
+				Matcher matcher = Pattern.compile("\\{([\\s\\S]*)\\}").matcher(throwable
+					.getMessage());
 
 				if (matcher.find()) {
 					JSONObject jsonObject = new JSONObject(matcher.group(0));

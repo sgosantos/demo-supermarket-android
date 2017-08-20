@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import com.wedeploy.android.Callback;
 import com.wedeploy.android.transport.Response;
-import io.wedeploy.supermarket.login.LoginRequest;
 import io.wedeploy.supermarket.repository.SupermarketAuth;
 
 /**
