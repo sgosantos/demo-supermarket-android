@@ -19,7 +19,7 @@ public class Product {
 	}
 
 	public String getImageUrl() {
-		return "http://public.supermarket.wedeploy.io/assets/images/" + filename;
+		return "https://ui-supermarket.wedeploy.io/assets/images/" + filename;
 	}
 
 	public double getPrice() {

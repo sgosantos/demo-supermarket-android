@@ -40,7 +40,7 @@ public class SupermarketData {
 			.create("cart", cartProductJsonObject);
 	}
 
-	public Call<Response> getCart() throws WeDeployException, JSONException {
+	public Call<Response> getCart() {
 		return weDeploy.data(DATA_URL)
 			.where(equal("userId", currentUserId))
 			.orderBy("productTitle")
@@ -59,7 +59,8 @@ public class SupermarketData {
 			.delete("cart/" + id);
 	}
 
-	public Call<Response> getProducts(String type) throws WeDeployException, JSONException {
+	public Call<Response> getProducts(String type) {
+		type = ("all".equalsIgnoreCase(type)) ? null : type;
 		Filter typeFilter = (type != null) ? match("type", type) : not("type", "");
 
 		return weDeploy.data(DATA_URL)
@@ -81,6 +82,6 @@ public class SupermarketData {
 
 	private static SupermarketData instance;
 
-	private static final String DATA_URL = "http://data.supermarket.wedeploy.io";
+	private static final String DATA_URL = "data-supermarket.wedeploy.io";
 
 }

@@ -90,7 +90,7 @@ public class SupermarketAuth {
 
 	private static SupermarketAuth instance;
 
-	private static final String AUTH_URL = "http://auth.supermarket.wedeploy.io";
+	private static final String AUTH_URL = "auth-supermarket.wedeploy.io";
 	private static final String TAG = SupermarketAuth.class.getSimpleName();
 
 }

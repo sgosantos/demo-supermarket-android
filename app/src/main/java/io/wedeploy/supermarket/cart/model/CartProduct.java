@@ -15,7 +15,7 @@ public class CartProduct {
 	}
 
 	public String getImageUrl() {
-		return "http://public.supermarket.wedeploy.io/assets/images/" + productFilename;
+		return "https://ui-supermarket.wedeploy.io/assets/images/" + productFilename;
 	}
 
 	public double getProductPrice() {

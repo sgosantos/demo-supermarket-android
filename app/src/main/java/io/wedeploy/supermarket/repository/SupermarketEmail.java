@@ -50,6 +50,6 @@ public class SupermarketEmail {
 
 	private static SupermarketEmail instance;
 
-	private static final String EMAIL_URL = "http://email.supermarket.wedeploy.io";
+	private static final String EMAIL_URL = "http://email-supermarket.wedeploy.io";
 
 }
