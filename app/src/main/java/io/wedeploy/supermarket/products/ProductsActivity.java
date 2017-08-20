@@ -1,8 +1,13 @@
 package io.wedeploy.supermarket.products;
 
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.transition.Fade;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.LoaderManager;
@@ -27,37 +32,14 @@ import java.util.List;
  * @author Silvio Santos
  */
 public class ProductsActivity extends AppCompatActivity
-	implements LoaderManager.LoaderCallbacks<List<Product>>, OnFilterSelectedListener,
-	CartItemListener, AddToCartListener {
+	implements OnFilterSelectedListener, CartItemListener, AddToCartListener,
+	LifecycleRegistryOwner {
 
 	@Override
-	public void onFilterSelected(String filter) {
-		binding.filterBarView.setFilter(filter);
+	public void onFilterSelected(String type) {
+		binding.filterBarView.setFilter(type);
 
-		getSupportLoaderManager().restartLoader(0, null, this);
-	}
-
-	@Override
-	public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
-		return new ProductsLoader(this, binding.filterBarView.getFilter());
-	}
-
-	@Override
-	public void onLoadFinished(Loader<List<Product>> loader, List<Product> products) {
-		showProducts();
-
-		if (products == null) {
-			Toast.makeText(this, "Could not load products", Toast.LENGTH_LONG).show();
-
-			return;
-		}
-
-		adapter.setItems(products);
-	}
-
-	@Override
-	public void onLoaderReset(Loader<List<Product>> loader) {
-		adapter.setItems(null);
+		productViewModel.filterProducts(type);
 	}
 
 	@Override
@@ -77,6 +59,11 @@ public class ProductsActivity extends AppCompatActivity
 		updateCartItemCount(count + 1);
 
 		AddToCartRequest.addToCart(this, product);
+	}
+
+	@Override
+	public LifecycleRegistry getLifecycle() {
+		return lifecycleRegistry;
 	}
 
 	@Override
@@ -109,7 +96,15 @@ public class ProductsActivity extends AppCompatActivity
 
 		showLoading();
 		setSupportActionBar(binding.toolbar);
-		getSupportLoaderManager().initLoader(0, null, this);
+		productViewModel = ViewModelProviders.of(this).get(ProductViewModel.class);
+
+		productViewModel.getProducts()
+			.observe(this, new Observer<List<Product>>() {
+				@Override
+				public void onChanged(@Nullable List<Product> products) {
+					showProducts(products);
+				}
+			});
 	}
 
 	@Override
@@ -132,10 +127,18 @@ public class ProductsActivity extends AppCompatActivity
 		binding.productsList.setVisibility(View.INVISIBLE);
 	}
 
-	private void showProducts() {
+	private void showProducts(List<Product> products) {
 		TransitionManager.beginDelayedTransition(binding.rootLayout, new Fade());
 		binding.loading.setVisibility(View.INVISIBLE);
 		binding.productsList.setVisibility(View.VISIBLE);
+
+		if (products == null) {
+			Toast.makeText(this, "Could not load products", Toast.LENGTH_LONG).show();
+
+			return;
+		}
+
+		adapter.setItems(products);
 	}
 
 	private void updateCartItemCount(int count) {
@@ -146,6 +149,8 @@ public class ProductsActivity extends AppCompatActivity
 	private final ProductAdapter adapter = new ProductAdapter(this);
 	private ActivityMainBinding binding;
 
+	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
+	private ProductViewModel productViewModel;
 	private static final String STATE_FILTER = "filter";
 
 }
