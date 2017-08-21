@@ -103,8 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleRegistr
 			ResourcesCompat.getColor(getResources(), R.color.colorAccent, null));
 
 		SpannableString signUpString = new SpannableString(getString(R.string.sign_up));
-		signUpString.setSpan(colorSpan, 0, signUpString.length(), Spanned
-			.SPAN_INCLUSIVE_INCLUSIVE);
+		signUpString.setSpan(colorSpan, 0, signUpString.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 		sb.append(" ");
 		sb.append(signUpString);
 
@@ -139,6 +138,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleRegistr
 		}
 
 	}
+
 	private ActivityLoginBinding binding;
 	private LoginViewModel loginViewModel;
 	private static final int REQUEST_RESET_PASSWORD = 1;
