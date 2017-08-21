@@ -1,5 +1,9 @@
 package io.wedeploy.supermarket.resetpassword;
 
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,39 +16,62 @@ import io.wedeploy.supermarket.view.AlertMessage;
 /**
  * @author Silvio Santos
  */
-public class ResetPasswordActivity extends AppCompatActivity implements ResetPasswordListener {
+public class ResetPasswordActivity extends AppCompatActivity implements LifecycleRegistryOwner {
+
+	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
 	@Override
-	public void onResetPasswordSuccess() {
-		setResult(RESULT_OK);
-		finish();
-	}
-
-	@Override
-	public void onResetPasswordFailed(Exception e) {
-		enableFields(true);
-		binding.resetPasswordButton.setText(R.string.send_reset_instructions);
-
-		AlertMessage.showErrorMessage(this, getString(R.string.invalid_email));
+	public LifecycleRegistry getLifecycle() {
+		return lifecycleRegistry;
 	}
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		binding = DataBindingUtil.setContentView(this, R.layout.activity_reset_password);
+		resetPasswordViewModel = ViewModelProviders.of(this).get(ResetPasswordViewModel.class);
+		resetPasswordViewModel.getState()
+			.observe(this, new Observer<ResetPasswordState>() {
+				@Override
+				public void onChanged(@Nullable ResetPasswordState state) {
+					setResetPasswordState(state);
+				}
+			});
 
+		binding = DataBindingUtil.setContentView(this, R.layout.activity_reset_password);
 		binding.resetPasswordButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				enableFields(false);
 				binding.resetPasswordButton.setText(R.string.sending_reset_instructions);
 
-				ResetPasswordRequest.resetPassword(
-					ResetPasswordActivity.this, binding.editText.getText().toString());
+				resetPasswordViewModel.resetPassword(binding.editText.getText().toString());
 			}
 		});
 
+	}
+
+	private void setResetPasswordState(ResetPasswordState state) {
+		switch (state.getState()) {
+			case IDLE:
+				enableFields(true);
+				break;
+
+			case SUCCESS:
+				setResult(RESULT_OK);
+				finish();
+				break;
+
+			case FAILURE:
+				resetPasswordViewModel.setIdleState();
+				binding.resetPasswordButton.setText(R.string.send_reset_instructions);
+
+				AlertMessage.showErrorMessage(this, getString(R.string.invalid_email));
+				break;
+
+			case LOADING:
+				break;
+		}
 	}
 
 	private void enableFields(boolean enable) {
@@ -54,4 +81,5 @@ public class ResetPasswordActivity extends AppCompatActivity implements ResetPas
 
 	private ActivityResetPasswordBinding binding;
 
+	private ResetPasswordViewModel resetPasswordViewModel;
 }
