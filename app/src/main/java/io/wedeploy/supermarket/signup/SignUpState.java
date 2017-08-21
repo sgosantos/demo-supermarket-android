@@ -1,17 +1,17 @@
-package io.wedeploy.supermarket.login;
+package io.wedeploy.supermarket.signup;
 
 import io.wedeploy.supermarket.util.State;
 
 /**
  * @author Silvio Santos
  */
-public class LoginState {
+class SignUpState {
 
-	public LoginState(State state) {
+	public SignUpState(State state) {
 		this.state = state;
 	}
 
-	public LoginState(State state, Exception exception) {
+	public SignUpState(State state, Exception exception) {
 		this.state = state;
 		this.exception = exception;
 	}
@@ -26,5 +26,4 @@ public class LoginState {
 
 	private Exception exception;
 	private State state;
-
 }
