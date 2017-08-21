@@ -1,11 +1,8 @@
 package io.wedeploy.supermarket.login;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 import com.wedeploy.android.auth.TokenAuthorization;
 import com.wedeploy.android.transport.Response;
 import io.reactivex.SingleSource;
@@ -17,38 +14,33 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.wedeploy.supermarket.repository.SupermarketAuth;
 
+import static io.wedeploy.supermarket.login.LoginState.State.*;
+
 /**
  * @author Silvio Santos
  */
-public class LoginRequest extends Fragment {
+public class LoginViewModel extends ViewModel {
 
-	public LoginRequest() {
-		setRetainInstance(true);
+	public LoginViewModel() {
+		loginState = new MutableLiveData<>();
+		loginState.setValue(new LoginState(IDLE));
 	}
 
-	public static void login(AppCompatActivity activity, String email, String password) {
-		LoginRequest request = new LoginRequest();
-		request.email = email;
-		request.password = password;
-
-		FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-		transaction.add(request, TAG);
-		transaction.commit();
+	public LiveData<LoginState> getLoginState() {
+		return loginState;
 	}
 
-	@Override
-	public void onAttach(Context context) {
-		super.onAttach(context);
+	public void login(String email, String password) {
+		loginState.setValue(new LoginState(LOADING));
 
-		if (context instanceof LoginListener) {
-			this.listener = (LoginListener)context;
-		}
+		doLogin(email, password);
 	}
 
-	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public void setIdleState() {
+		loginState.setValue(new LoginState(IDLE));
+	}
 
+	private void doLogin(String email, String password) {
 		final SupermarketAuth auth = SupermarketAuth.getInstance();
 		auth.signIn(email, password)
 			.asSingle()
@@ -74,31 +66,16 @@ public class LoginRequest extends Fragment {
 			.subscribe(new DisposableSingleObserver<Response>() {
 				@Override
 				public void onSuccess(Response response) {
-					removeRequest();
-
-					listener.onLoginSuccess();
+					loginState.setValue(new LoginState(SUCCESS));
 				}
 
 				@Override
 				public void onError(Throwable throwable) {
-					removeRequest();
-
-					listener.onLoginFailed(throwable);
+					loginState.setValue(new LoginState(FAILURE, new Exception(throwable)));
 				}
 			});
 	}
 
-	private void removeRequest() {
-		getActivity().getSupportFragmentManager()
-			.beginTransaction()
-			.remove(LoginRequest.this)
-			.commit();
-	}
-
-	private String email;
-	private LoginListener listener;
-	private String password;
-
-	private static final String TAG = LoginRequest.class.getSimpleName();
+	private MutableLiveData<LoginState> loginState;
 
 }

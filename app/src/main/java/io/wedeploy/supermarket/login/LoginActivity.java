@@ -1,8 +1,13 @@
 package io.wedeploy.supermarket.login;
 
+import android.arch.lifecycle.LifecycleRegistry;
+import android.arch.lifecycle.LifecycleRegistryOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
@@ -22,25 +27,13 @@ import static io.wedeploy.supermarket.util.ErrorUtil.getError;
 /**
  * @author Silvio Santos
  */
-public class LoginActivity extends AppCompatActivity implements LoginListener {
+public class LoginActivity extends AppCompatActivity implements LifecycleRegistryOwner {
+
+	LifecycleRegistry lifecycleRegistry = new LifecycleRegistry(this);
 
 	@Override
-	public void onLoginSuccess() {
-		if (isFinishing()) return;
-
-		startActivity(new Intent(this, ProductsActivity.class));
-		finishAffinity();
-	}
-
-	@Override
-	public void onLoginFailed(Throwable throwable) {
-		if (isFinishing()) return;
-
-		enableFields(true);
-		binding.signInButton.setText(R.string.log_in);
-
-		AlertMessage.showErrorMessage(
-			this, getError(throwable, getString(R.string.could_not_login)));
+	public LifecycleRegistry getLifecycle() {
+		return lifecycleRegistry;
 	}
 
 	@Override
@@ -48,6 +41,14 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 		super.onCreate(savedInstanceState);
 
 		binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+
+		loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+		loginViewModel.getLoginState().observe(this, new Observer<LoginState>() {
+			@Override
+			public void onChanged(@Nullable LoginState loginState) {
+				setLoginState(loginState);
+			}
+		});
 
 		binding.signUpButton.setText(getSignUpButtonText());
 		binding.signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -61,13 +62,10 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 		binding.signInButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				enableFields(false);
-				binding.signInButton.setText(R.string.logging_in);
-
 				String email = binding.email.getText().toString();
 				String password = binding.password.getText().toString();
 
-				LoginRequest.login(LoginActivity.this, email, password);
+				loginViewModel.login(email, password);
 			}
 		});
 
@@ -113,7 +111,36 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 		return sb;
 	}
 
+	private void setLoginState(LoginState loginState) {
+		switch (loginState.getState()) {
+			case IDLE:
+				enableFields(true);
+				binding.signInButton.setText(R.string.log_in);
+				break;
+
+			case LOADING:
+				enableFields(false);
+				binding.signInButton.setText(R.string.logging_in);
+				break;
+
+			case SUCCESS:
+				startActivity(new Intent(this, ProductsActivity.class));
+				finishAffinity();
+				break;
+
+			case FAILURE:
+				loginViewModel.setIdleState();
+
+				AlertMessage.showErrorMessage(
+					this, getError(loginState.getException(), getString(R.string
+						.could_not_login)));
+
+				break;
+		}
+
+	}
 	private ActivityLoginBinding binding;
+	private LoginViewModel loginViewModel;
 	private static final int REQUEST_RESET_PASSWORD = 1;
 
 }
