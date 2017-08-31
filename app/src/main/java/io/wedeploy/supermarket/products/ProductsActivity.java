@@ -99,7 +99,9 @@ public class ProductsActivity extends AppCompatActivity
 			.observe(this, new Observer<Integer>() {
 				@Override
 				public void onChanged(@Nullable Integer count) {
-					updateCartItemCount(count);
+					if (count != null) {
+						updateCartItemCount(count);
+					}
 				}
 			});
 	}

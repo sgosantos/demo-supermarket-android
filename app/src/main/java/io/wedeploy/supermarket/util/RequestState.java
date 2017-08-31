@@ -1,6 +1,6 @@
 package io.wedeploy.supermarket.util;
 
-public enum State {
+public enum RequestState {
 	IDLE,
 	SUCCESS,
 	FAILURE,

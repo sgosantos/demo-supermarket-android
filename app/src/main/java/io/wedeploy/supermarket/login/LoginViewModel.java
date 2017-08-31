@@ -14,7 +14,7 @@ import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import io.wedeploy.supermarket.repository.SupermarketAuth;
 
-import static io.wedeploy.supermarket.util.State.*;
+import static io.wedeploy.supermarket.util.RequestState.*;
 
 /**
  * @author Silvio Santos

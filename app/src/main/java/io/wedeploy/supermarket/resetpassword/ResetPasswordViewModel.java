@@ -10,9 +10,9 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.wedeploy.supermarket.repository.SupermarketAuth;
 
-import static io.wedeploy.supermarket.util.State.FAILURE;
-import static io.wedeploy.supermarket.util.State.IDLE;
-import static io.wedeploy.supermarket.util.State.SUCCESS;
+import static io.wedeploy.supermarket.util.RequestState.FAILURE;
+import static io.wedeploy.supermarket.util.RequestState.IDLE;
+import static io.wedeploy.supermarket.util.RequestState.SUCCESS;
 
 /**
  * @author Silvio Santos

@@ -1,22 +1,22 @@
 package io.wedeploy.supermarket.resetpassword;
 
-import io.wedeploy.supermarket.util.State;
+import io.wedeploy.supermarket.util.RequestState;
 
 /**
  * @author Silvio Santos
  */
 public class ResetPasswordState {
 
-	public ResetPasswordState(State state) {
+	public ResetPasswordState(RequestState state) {
 		this.state = state;
 	}
 
-	public ResetPasswordState(State state, Exception exception) {
+	public ResetPasswordState(RequestState state, Exception exception) {
 		this.state = state;
 		this.exception = exception;
 	}
 
-	public State getState() {
+	public RequestState getState() {
 		return state;
 	}
 
@@ -25,5 +25,5 @@ public class ResetPasswordState {
 	}
 
 	private Exception exception;
-	private State state;
+	private RequestState state;
 }

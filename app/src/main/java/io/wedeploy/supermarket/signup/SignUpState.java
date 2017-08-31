@@ -1,22 +1,22 @@
 package io.wedeploy.supermarket.signup;
 
-import io.wedeploy.supermarket.util.State;
+import io.wedeploy.supermarket.util.RequestState;
 
 /**
  * @author Silvio Santos
  */
 class SignUpState {
 
-	public SignUpState(State state) {
+	public SignUpState(RequestState state) {
 		this.state = state;
 	}
 
-	public SignUpState(State state, Exception exception) {
+	public SignUpState(RequestState state, Exception exception) {
 		this.state = state;
 		this.exception = exception;
 	}
 
-	public State getState() {
+	public RequestState getState() {
 		return state;
 	}
 
@@ -25,5 +25,5 @@ class SignUpState {
 	}
 
 	private Exception exception;
-	private State state;
+	private RequestState state;
 }

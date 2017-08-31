@@ -1,22 +1,22 @@
 package io.wedeploy.supermarket.login;
 
-import io.wedeploy.supermarket.util.State;
+import io.wedeploy.supermarket.util.RequestState;
 
 /**
  * @author Silvio Santos
  */
 public class LoginState {
 
-	public LoginState(State state) {
+	public LoginState(RequestState state) {
 		this.state = state;
 	}
 
-	public LoginState(State state, Exception exception) {
+	public LoginState(RequestState state, Exception exception) {
 		this.state = state;
 		this.exception = exception;
 	}
 
-	public State getState() {
+	public RequestState getState() {
 		return state;
 	}
 
@@ -25,6 +25,6 @@ public class LoginState {
 	}
 
 	private Exception exception;
-	private State state;
+	private RequestState state;
 
 }

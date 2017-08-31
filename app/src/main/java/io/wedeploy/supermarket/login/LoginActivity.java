@@ -20,9 +20,11 @@ import io.wedeploy.supermarket.databinding.ActivityLoginBinding;
 import io.wedeploy.supermarket.products.ProductsActivity;
 import io.wedeploy.supermarket.resetpassword.ResetPasswordActivity;
 import io.wedeploy.supermarket.signup.SignUpActivity;
+import io.wedeploy.supermarket.util.RequestState;
 import io.wedeploy.supermarket.view.AlertMessage;
 
 import static io.wedeploy.supermarket.util.ErrorUtil.getError;
+import static io.wedeploy.supermarket.util.RequestState.*;
 
 /**
  * @author Silvio Santos
@@ -45,8 +47,8 @@ public class LoginActivity extends AppCompatActivity implements LifecycleRegistr
 		loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
 		loginViewModel.getLoginState().observe(this, new Observer<LoginState>() {
 			@Override
-			public void onChanged(@Nullable LoginState loginState) {
-				setLoginState(loginState);
+			public void onChanged(@Nullable LoginState state) {
+				setLoginState(state);
 			}
 		});
 
@@ -110,8 +112,8 @@ public class LoginActivity extends AppCompatActivity implements LifecycleRegistr
 		return sb;
 	}
 
-	private void setLoginState(LoginState loginState) {
-		switch (loginState.getState()) {
+	private void setLoginState(LoginState state) {
+		switch (state.getState()) {
 			case IDLE:
 				enableFields(true);
 				binding.signInButton.setText(R.string.log_in);
@@ -131,7 +133,7 @@ public class LoginActivity extends AppCompatActivity implements LifecycleRegistr
 				loginViewModel.setIdleState();
 
 				AlertMessage.showErrorMessage(
-					this, getError(loginState.getException(), getString(R.string
+					this, getError(state.getException(), getString(R.string
 						.could_not_login)));
 
 				break;
